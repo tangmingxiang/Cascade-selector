@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>递归组件</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    
+    ul {
+      list-style: none;
+    }
+
+    #app {
+      border: 1px solid #000;
+      width: 600px;
+      height: 260px;
+    }
+
+    .parent, .child-container {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .child {
+      border: 1px solid #cfe;
+      width: 200px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app">
+    <parent-component></parent-component>
+  </div>
+
+  <template id="parent" class="parent">
+    <div>
+      <child-component :address="address"></child-component>
+    </div>
+  </template>
+
+  <template id="child">
+    <div class="child-container">
+      <ul class="child">
+        <li v-for="(item, index) in addressArr" :key="index" @click="handleClick(index)">{{ item }}</li>
+      </ul>
+      <child-component v-if="addressSecond" :address="addressSecond"></child-component>
+    </div> 
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    // props emit 通信
+    const ChildComponent = {
+      name: 'child-component',
+      template: "#child",
+      props: {
+        address: {
+          type: [Object, Array],
+          default: () => {}
+        }
+      },
+      data() {
+        return {
+          addressSelected: ''
+        }
+      },
+      computed: {
+        addressArr() {
+          if (Array.isArray(this.address)) {
+            return this.address
+          }
+          return Object.keys(this.address)
+        },
+        addressSecond() {
+          if (this.address[this.addressSelected]) {
+            return this.address[this.addressSelected]
+          }
+          return null
+        }
+      },
+      methods: {
+        handleClick(index, event) {
+          if(this.addressSelected === this.addressArr[index]) {
+            this.addressSelected = ''
+            return
+          }
+          this.addressSelected = this.addressArr[index]
+        }
+      }
+    }
+    const ParentComponent = {
+      template: "#parent",
+      components: {
+        ChildComponent
+      },
+      data() {
+        return {
+          address: {
+            '湖南': {
+              '长沙': ['长沙县', '宁乡县'],
+              '邵阳': ['邵阳县','邵东市','新邵县','隆回县']
+            }
+          }
+        }
+      },
+    }
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+
+        }
+      },
+      components: {
+        ParentComponent
+      }
+    })
+  </script>
+</body>
+</html>
