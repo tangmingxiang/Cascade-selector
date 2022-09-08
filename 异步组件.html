@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>异步组件的原生实现</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    
+    ul {
+      list-style: none;
+    }
+
+    #app {
+      border: 1px solid #000;
+      width: 600px;
+      height: 260px;
+    }
+
+    .parent, .child-container {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .child {
+      border: 1px solid #cfe;
+      width: 200px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app">
+    <parent-component></parent-component>
+  </div>
+
+  <template id="parent" class="parent">
+    <div>
+      <child-component></child-component>
+    </div>
+  </template>
+  <template id="child">
+    <div>
+      <div>{{ childMessage }}</div>
+    </div>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    const ChildComponent = {
+      template: "#child",
+      data() {
+        return {
+          childMessage: '子组件信息',
+        }
+      }
+    }
+    const ParentComponent = {
+      template: "#parent",
+      components: {
+        // 异步组件
+        ChildComponent: function(resolve, reject) {
+          window.setTimeout(function() {
+            resolve(ChildComponent)
+          },2000)
+        }
+      },
+      data() {
+        return {
+
+        }
+      },
+    }
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+
+        }
+      },
+      components: {
+        ParentComponent
+      }
+    })
+  </script>
+</body>
+</html>
