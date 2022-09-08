@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>内联模版</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    
+    ul {
+      list-style: none;
+    }
+
+    #app {
+      border: 1px solid #000;
+      width: 600px;
+      height: 260px;
+    }
+
+    .parent, .child-container {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .child {
+      border: 1px solid #cfe;
+      width: 200px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="app">
+    <parent-component></parent-component>
+    <child-component inline-template>
+      <div>
+        <div>{{ childMessage }}</div>
+        <div>{{ message }}</div>
+      </div>
+    </child-component>
+  </div>
+
+  <template id="parent" class="parent">
+    <div>
+      <child-component inline-template>
+        <!-- 信息解析来源于子组件域 -->
+        <div>
+          <div>{{ childMessage }}</div>
+          <div>{{ message }}</div>
+        </div>
+      </child-component>
+    </div>
+  </template>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    // props emit 通信
+    const ChildComponent = {
+      data() {
+        return {
+          childMessage: '子组件信息',
+          // message: '子组件信息-1'
+        }
+      }
+    }
+    const ParentComponent = {
+      template: "#parent",
+      components: {
+        ChildComponent
+      },
+      data() {
+        return {
+          message: '父组件信息'
+        }
+      },
+    }
+    const app = new Vue({
+      el: '#app',
+      data() {
+        return {
+          message: '父组件信息'
+        }
+      },
+      components: {
+        ParentComponent,
+        ChildComponent
+      }
+    })
+  </script>
+</body>
+</html>
